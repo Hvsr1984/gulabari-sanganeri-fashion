@@ -1,0 +1,229 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bone: #f8f5ee;
+  --color-bone-deep: #ede5d5;
+  --color-cotton: #fcfbf9;
+  --color-ink: #23201b;
+  --color-ink-soft: #4a453c;
+  --color-ink-faint: #797368;
+  --color-indigo: #25395c;
+  --color-indigo-deep: #16243d;
+  --color-madder: #9c3b2e;
+  --color-terracotta: #b8543f;
+  --color-turmeric: #c98a1e;
+  --color-sage: #738059;
+  --color-teak: #6e492b;
+  --color-teak-soft: #9c734b;
+  --color-sandstone: #e8ded0;
+
+  --font-serif: var(--font-fraunces), "Playfair Display", Georgia, serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --ease-craft: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+:root {
+  --dur-fast: 180ms;
+  --dur-mid: 320ms;
+  --dur-slow: 650ms;
+}
+
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: var(--color-bone);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--color-indigo);
+  color: var(--color-bone);
+}
+
+/* Subtle organic linen/handloom paper grain texture */
+.grain {
+  background-image:
+    radial-gradient(rgba(110, 73, 43, 0.045) 1px, transparent 1px),
+    radial-gradient(rgba(37, 57, 92, 0.035) 1px, transparent 1px);
+  background-size: 24px 24px, 36px 36px;
+  background-position: 0 0, 12px 12px;
+}
+
+/* 3D Depth and Perspectives */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.perspective-1200 {
+  perspective: 1200px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Realistic tactile cloth and deckled paper shadows */
+.cloth-shadow {
+  box-shadow:
+    0 4px 6px -1px rgba(35, 32, 27, 0.06),
+    0 12px 24px -4px rgba(35, 32, 27, 0.1),
+    0 24px 48px -12px rgba(110, 73, 43, 0.08);
+}
+
+.cloth-shadow-lg {
+  box-shadow:
+    0 10px 15px -3px rgba(35, 32, 27, 0.07),
+    0 25px 35px -5px rgba(35, 32, 27, 0.12),
+    0 40px 70px -15px rgba(37, 57, 92, 0.1);
+}
+
+.swatch-card {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 8px 16px rgba(35, 32, 27, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+/* Luxury fashion CTA button micro-interaction — subtle, no glow, no bounce */
+.btn-editorial {
+  transition: transform 300ms var(--ease-craft), background-color 300ms ease, border-color 300ms ease, color 300ms ease, box-shadow 300ms ease;
+}
+
+.btn-editorial:hover {
+  transform: translateY(-1.5px);
+}
+
+.btn-editorial:active {
+  transform: translateY(0.5px);
+}
+
+.btn-editorial svg {
+  transition: transform 250ms var(--ease-craft);
+}
+
+.btn-editorial:hover svg {
+  transform: translateX(3px);
+}
+
+/* Stamp border stroke animation */
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.stamp-border path,
+.stamp-border line,
+.stamp-border rect {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+}
+
+.stamp-border.in-view path,
+.stamp-border.in-view line,
+.stamp-border.in-view rect {
+  animation: draw 1.6s var(--ease-craft) forwards;
+}
+
+/* Subtle organic float animation for fabric swatches */
+@keyframes float-subtle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(0.4deg);
+  }
+}
+
+.animate-float {
+  animation: float-subtle 7s ease-in-out infinite;
+}
+
+/* Editorial physical craft badge — tactile, matte, no artificial glow, bloom or emission */
+.craft-pill {
+  background-color: #F3EFE6;
+  border: 1px solid rgba(110, 73, 43, 0.18);
+  color: var(--color-ink, #23201b);
+  box-shadow: 0 1px 2px rgba(35, 32, 27, 0.08);
+}
+
+.pulse-craft {
+  animation: none;
+  box-shadow: none;
+}
+
+/* Slow Ken Burns for editorial imagery */
+.ken-burns {
+  animation: kenburns 45s ease-in-out infinite alternate;
+}
+
+@keyframes kenburns {
+  from {
+    transform: scale(1.0);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
+
+/* Field validation shake */
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-3px); }
+  40%, 60% { transform: translateX(3px); }
+}
+
+.shake {
+  animation: shake 0.4s ease both;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(248, 245, 238, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-panel-dark {
+  background: rgba(22, 36, 61, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Accessibility & Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .ken-burns,
+  .animate-float,
+  .pulse-craft {
+    animation: none !important;
+  }
+  .stamp-border path,
+  .stamp-border line,
+  .stamp-border rect {
+    stroke-dashoffset: 0 !important;
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
