@@ -40,3 +40,5 @@ yarn-error.log*
 
 # Agent scratch / internals
 .agents/
+
+.vercel
