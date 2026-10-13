@@ -11,13 +11,7 @@ const nextConfig: NextConfig = {
    * Without this allowlist Next refuses cross-origin dev requests, which
    * silently breaks HMR and the image optimiser inside the preview iframe.
    */
-  allowedDevOrigins: [
-    "localhost",
-    "127.0.0.1",
-    "*.e2b.app",
-    "*.e2b.dev",
-    "*.vercel.app",
-  ],
+  allowedDevOrigins: ["localhost", "127.0.0.1", "*.e2b.app", "*.e2b.dev", "*.vercel.app"],
 
   images: {
     // Modern formats first — AVIF is ~65% smaller than the source JPEGs,
