@@ -5,6 +5,20 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
 
+  /**
+   * The dev server is reached through a proxied preview host
+   * (https://<port>-<sandbox>.e2b.app), plus localhost for direct work.
+   * Without this allowlist Next refuses cross-origin dev requests, which
+   * silently breaks HMR and the image optimiser inside the preview iframe.
+   */
+  allowedDevOrigins: [
+    "localhost",
+    "127.0.0.1",
+    "*.e2b.app",
+    "*.e2b.dev",
+    "*.vercel.app",
+  ],
+
   images: {
     // Modern formats first — AVIF is ~65% smaller than the source JPEGs,
     // WebP is the fallback for older Safari/Firefox builds.
