@@ -16,7 +16,7 @@ export function MotifStrip() {
           <Link
             key={motif.key}
             href={`/craft#motif-${motif.key}`}
-            className="group flex flex-col items-center rounded-xl border border-teak/15 bg-bone/60 p-6 text-center transition-colors hover:border-indigo/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo"
+            className="group border-teak/15 bg-bone/60 hover:border-indigo/40 focus-visible:outline-indigo flex flex-col items-center rounded-xl border p-6 text-center transition-colors focus-visible:outline focus-visible:outline-2"
           >
             <motion.div
               className="text-ink"
@@ -26,7 +26,7 @@ export function MotifStrip() {
               <Glyph className="h-16 w-16 [&_*]:transition-all [&_*]:duration-700 group-hover:[&_path]:[stroke-dasharray:120] group-hover:[&_path]:[stroke-dashoffset:0]" />
             </motion.div>
             <p className="mt-3 font-serif text-lg">{motif.name}</p>
-            <p className="mt-1 text-xs text-ink-soft">{motif.short}</p>
+            <p className="text-ink-soft mt-1 text-xs">{motif.short}</p>
           </Link>
         );
       })}

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import type { Product } from "@/db/schema";
 import { ProductCard } from "./product-card";
+import { DialogShell } from "./dialog-shell";
 
 type FilterKey = "garment" | "motifFamily" | "colorway";
 
@@ -49,8 +50,7 @@ export function ShopBrowser({ products }: { products: Product[] }) {
     });
   };
 
-  const clearAll = () =>
-    setActive({ garment: [], motifFamily: [], colorway: [] });
+  const clearAll = () => setActive({ garment: [], motifFamily: [], colorway: [] });
 
   const filtered = useMemo(() => {
     const list = products.filter((p) =>
@@ -72,7 +72,7 @@ export function ShopBrowser({ products }: { products: Product[] }) {
     <div className="space-y-7">
       {FILTERS.map((filter) => (
         <div key={filter.key}>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-ink-soft">
+          <p className="text-ink-soft mb-2 text-xs font-semibold tracking-widest uppercase">
             {filter.label}
           </p>
           <div className="flex flex-wrap gap-2">
@@ -82,10 +82,11 @@ export function ShopBrowser({ products }: { products: Product[] }) {
                 <button
                   key={value}
                   onClick={() => toggle(filter.key, value)}
-                  className={`rounded-full border px-3 py-1.5 text-sm capitalize transition-colors ${
+                  aria-pressed={on}
+                  className={`rounded-full border px-3 py-1.5 text-sm capitalize transition-all duration-200 active:scale-95 ${
                     on
-                      ? "border-indigo bg-indigo text-bone"
-                      : "border-teak/25 text-ink-soft hover:border-indigo"
+                      ? "border-indigo bg-indigo text-bone shadow-sm"
+                      : "border-teak/25 text-ink-soft hover:border-indigo hover:text-ink"
                   }`}
                 >
                   {value}
@@ -106,7 +107,7 @@ export function ShopBrowser({ products }: { products: Product[] }) {
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-serif text-xl">Filter</h2>
             {activeChips.length > 0 && (
-              <button onClick={clearAll} className="text-xs text-indigo hover:underline">
+              <button onClick={clearAll} className="text-indigo text-xs hover:underline">
                 Clear
               </button>
             )}
@@ -120,11 +121,11 @@ export function ShopBrowser({ products }: { products: Product[] }) {
         <div className="mb-6 flex items-center justify-between gap-3">
           <button
             onClick={() => setPanelOpen(true)}
-            className="rounded-full border border-teak/25 px-4 py-2 text-sm lg:hidden"
+            className="border-teak/25 rounded-full border px-4 py-2 text-sm lg:hidden"
           >
             Filter ({activeChips.length})
           </button>
-          <p className="hidden text-sm text-ink-soft lg:block">
+          <p className="text-ink-soft hidden text-sm lg:block" aria-live="polite">
             {filtered.length} {filtered.length === 1 ? "piece" : "pieces"}
           </p>
           <label className="ml-auto flex items-center gap-2 text-sm">
@@ -132,7 +133,8 @@ export function ShopBrowser({ products }: { products: Product[] }) {
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
-              className="rounded-full border border-teak/25 bg-bone px-3 py-2 text-sm outline-none"
+              aria-label="Sort the collection"
+              className="border-teak/25 bg-bone rounded-full border px-3 py-2 text-sm"
             >
               {SORTS.map((s) => (
                 <option key={s.key} value={s.key}>
@@ -145,21 +147,26 @@ export function ShopBrowser({ products }: { products: Product[] }) {
 
         {/* Active chips */}
         {activeChips.length > 0 && (
-          <div className="mb-6 flex flex-wrap gap-2">
+          <motion.div layout className="mb-6 flex flex-wrap gap-2">
             {activeChips.map((chip) => (
               <motion.button
                 key={`${chip.key}-${chip.value}`}
-                initial={{ scale: 0.9 }}
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{ duration: 0.25 }}
+                layout
+                initial={{ scale: 0.86, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.86, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 420, damping: 30 }}
                 onClick={() => toggle(chip.key, chip.value)}
-                className="flex items-center gap-1.5 rounded-full bg-bone-deep px-3 py-1.5 text-sm capitalize"
+                className="border-teak/20 bg-bone-deep hover:border-madder/40 hover:text-madder flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm capitalize transition-colors"
+                aria-label={`Remove filter ${chip.value}`}
               >
                 {chip.value}
-                <span className="text-ink-soft">✕</span>
+                <span aria-hidden="true" className="text-ink-soft">
+                  ✕
+                </span>
               </motion.button>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {/* Grid */}
@@ -177,56 +184,62 @@ export function ShopBrowser({ products }: { products: Product[] }) {
         </LayoutGroup>
 
         {filtered.length === 0 && (
-          <div className="py-24 text-center text-ink-soft">
+          <div className="text-ink-soft py-24 text-center">
             <p>No pieces match these filters yet.</p>
-            <button onClick={clearAll} className="mt-3 text-indigo hover:underline">
+            <button onClick={clearAll} className="text-indigo mt-3 hover:underline">
               Clear filters
             </button>
           </div>
         )}
       </div>
 
-      {/* Mobile bottom sheet */}
-      <AnimatePresence>
-        {panelOpen && (
-          <div className="fixed inset-0 z-50 lg:hidden">
-            <motion.div
-              className="absolute inset-0 bg-ink/40"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setPanelOpen(false)}
-            />
-            <motion.div
-              className="absolute inset-x-0 bottom-0 max-h-[80vh] overflow-y-auto rounded-t-2xl bg-bone p-6"
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ duration: 0.3, ease: [0.22, 0.61, 0.36, 1] }}
+      {/* Mobile filter sheet — focus-trapped, Escape-dismissable */}
+      <DialogShell
+        open={panelOpen}
+        onClose={() => setPanelOpen(false)}
+        label="Filter the collection"
+        variant="bottom"
+        panelClassName="absolute inset-x-0 bottom-0 max-h-[80vh] overflow-y-auto rounded-t-2xl border-t border-teak/20 bg-bone p-6 lg:hidden"
+      >
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="font-serif text-xl">Filter</h2>
+          <button
+            onClick={() => setPanelOpen(false)}
+            className="border-teak/20 text-ink-soft hover:border-ink hover:text-ink rounded-full border p-2"
+            aria-label="Close filters"
+          >
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
             >
-              <div className="mb-5 flex items-center justify-between">
-                <h2 className="font-serif text-xl">Filter</h2>
-                <button onClick={() => setPanelOpen(false)}>✕</button>
-              </div>
-              {Sidebar}
-              <div className="mt-6 flex gap-3">
-                <button
-                  onClick={clearAll}
-                  className="flex-1 rounded-full border border-teak/25 py-3 text-sm"
-                >
-                  Clear
-                </button>
-                <button
-                  onClick={() => setPanelOpen(false)}
-                  className="flex-1 rounded-full bg-indigo py-3 text-sm text-bone"
-                >
-                  Show {filtered.length}
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+        {Sidebar}
+        <div className="mt-6 flex gap-3">
+          <button
+            onClick={clearAll}
+            className="border-teak/25 flex-1 rounded-full border py-3 text-sm"
+          >
+            Clear
+          </button>
+          <button
+            onClick={() => setPanelOpen(false)}
+            className="bg-indigo text-bone flex-1 rounded-full py-3 text-sm"
+          >
+            Show {filtered.length}
+          </button>
+        </div>
+      </DialogShell>
     </div>
   );
 }

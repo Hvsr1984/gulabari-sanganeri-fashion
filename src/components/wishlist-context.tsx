@@ -3,11 +3,12 @@
 import {
   createContext,
   useContext,
-  useEffect,
+  useMemo,
   useState,
   useCallback,
   type ReactNode,
 } from "react";
+import { useStoredSetter, useStoredValue } from "@/lib/hydration";
 
 export type WishlistItem = {
   slug: string;
@@ -33,67 +34,47 @@ type WishlistState = {
 
 const WishlistContext = createContext<WishlistState | null>(null);
 const STORAGE_KEY = "gulabari-wishlist-v1";
+const EMPTY: WishlistItem[] = [];
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<WishlistItem[]>([]);
+  // Same pattern as the cart: read straight from the store on first render.
+  const stored = useStoredValue<WishlistItem[]>(STORAGE_KEY, EMPTY);
+  const persist = useStoredSetter<WishlistItem[]>(STORAGE_KEY);
   const [isOpen, setIsOpen] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setItems(JSON.parse(raw));
-    } catch {
-      /* ignore */
-    }
-    setHydrated(true);
-  }, []);
-
-  useEffect(() => {
-    if (!hydrated) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  }, [items, hydrated]);
-
-  const isInWishlist = useCallback(
-    (slug: string) => items.some((item) => item.slug === slug),
-    [items]
+  const toggleWishlist = useCallback(
+    (item: WishlistItem) => {
+      const exists = stored.some((entry) => entry.slug === item.slug);
+      persist(exists ? stored.filter((entry) => entry.slug !== item.slug) : [...stored, item]);
+    },
+    [persist, stored]
   );
 
-  const toggleWishlist = useCallback((item: WishlistItem) => {
-    setItems((prev) => {
-      const exists = prev.some((p) => p.slug === item.slug);
-      if (exists) {
-        return prev.filter((p) => p.slug !== item.slug);
-      }
-      return [...prev, item];
-    });
-  }, []);
+  const removeItem = useCallback(
+    (slug: string) => persist(stored.filter((entry) => entry.slug !== slug)),
+    [persist, stored]
+  );
 
-  const removeItem = useCallback((slug: string) => {
-    setItems((prev) => prev.filter((p) => p.slug !== slug));
-  }, []);
-
-  const clear = useCallback(() => setItems([]), []);
+  const clear = useCallback(() => persist(EMPTY), [persist]);
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => setIsOpen(false), []);
 
-  return (
-    <WishlistContext.Provider
-      value={{
-        items,
-        isOpen,
-        toggleWishlist,
-        isInWishlist,
-        removeItem,
-        clear,
-        open,
-        close,
-        count: items.length,
-      }}
-    >
-      {children}
-    </WishlistContext.Provider>
+  const value = useMemo<WishlistState>(
+    () => ({
+      items: stored,
+      isOpen,
+      toggleWishlist,
+      isInWishlist: (slug: string) => stored.some((entry) => entry.slug === slug),
+      removeItem,
+      clear,
+      open,
+      close,
+      count: stored.length,
+    }),
+    [stored, isOpen, toggleWishlist, removeItem, clear, open, close]
   );
+
+  return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;
 }
 
 export function useWishlist() {

@@ -15,7 +15,7 @@ export function StampBorder({ className = "" }: { className?: string }) {
       <svg
         viewBox="0 0 700 24"
         preserveAspectRatio="none"
-        className="h-6 w-full text-teak/50"
+        className="text-teak/50 h-6 w-full"
         fill="none"
       >
         <motion.g

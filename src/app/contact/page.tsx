@@ -10,15 +10,13 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="grain pt-24 sm:pt-28 pb-20">
-      <header className="mx-auto max-w-3xl px-5 py-14 sm:py-20 text-center">
-        <p className="text-sm uppercase tracking-widest text-teak">Say hello</p>
-        <h1 className="mt-3 font-serif text-4xl sm:text-5xl">
-          Contact & Wholesale
-        </h1>
-        <p className="mt-5 leading-relaxed text-ink-soft">
-          Questions about a piece, wholesale, or stocking GULABARI in your shop? Write
-          to us — a real person reads every message.
+    <div className="grain pt-24 pb-20 sm:pt-28">
+      <header className="mx-auto max-w-3xl px-5 py-14 text-center sm:py-20">
+        <p className="text-teak text-sm tracking-widest uppercase">Say hello</p>
+        <h1 className="mt-3 font-serif text-4xl sm:text-5xl">Contact & Wholesale</h1>
+        <p className="text-ink-soft mt-5 leading-relaxed">
+          Questions about a piece, wholesale, or stocking GULABARI in your shop? Write to us — a
+          real person reads every message.
         </p>
       </header>
 
@@ -31,7 +29,7 @@ export default function ContactPage() {
           <aside className="space-y-8">
             <div>
               <h2 className="font-serif text-xl">Studio</h2>
-              <p className="mt-2 text-sm leading-relaxed text-ink-soft">
+              <p className="text-ink-soft mt-2 text-sm leading-relaxed">
                 Sanganer, Jaipur
                 <br />
                 Rajasthan, India
@@ -39,22 +37,22 @@ export default function ContactPage() {
             </div>
             <div>
               <h2 className="font-serif text-xl">Wholesale</h2>
-              <p className="mt-2 text-sm leading-relaxed text-ink-soft">
+              <p className="text-ink-soft mt-2 text-sm leading-relaxed">
                 We work with a small number of considered retail partners. Choose
-                &ldquo;Wholesale&rdquo; in the form and we&rsquo;ll send our line
-                sheet and terms.
+                &ldquo;Wholesale&rdquo; in the form and we&rsquo;ll send our line sheet and
+                terms.
               </p>
             </div>
             <div>
               <h2 className="font-serif text-xl">Stockists</h2>
-              <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-                GULABARI is currently sold online and through selected boutiques in
-                Jaipur, Delhi and Mumbai. Ask us for your nearest stockist.
+              <p className="text-ink-soft mt-2 text-sm leading-relaxed">
+                GULABARI is currently sold online and through selected boutiques in Jaipur,
+                Delhi and Mumbai. Ask us for your nearest stockist.
               </p>
             </div>
             <div>
               <h2 className="font-serif text-xl">Email</h2>
-              <p className="mt-2 text-sm text-ink-soft">hello@gulabari.example</p>
+              <p className="text-ink-soft mt-2 text-sm">hello@gulabari.example</p>
             </div>
           </aside>
         </Reveal>

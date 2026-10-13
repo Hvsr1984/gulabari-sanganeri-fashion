@@ -136,8 +136,7 @@ export const productSeed = [
     fabric: "100% Cotton Voile, lightweight gauze feel",
     motifNotes:
       "Sugga Bel takes its name from the sugga (parrot) worked into the running creeper — one of several named bel variants alongside Keri and Morani.",
-    careNotes:
-      "Cold gentle wash, shade dry, cool iron. Wash separately for the first washes.",
+    careNotes: "Cold gentle wash, shade dry, cool iron. Wash separately for the first washes.",
     printedNotes:
       "The parrot and the vine are carried on one repeated block, run between two printed boundary lines.",
     sizes: ["One Size"],
@@ -184,8 +183,7 @@ export const productSeed = [
     fabric: "100% Cotton Cambric, flowing weight",
     motifNotes:
       "A jaal that must stay true across curved pattern pieces — a real test of the printer's alignment and the carver's repeat.",
-    careNotes:
-      "Hand wash cold, shade dry flat, cool iron. Avoid wringing.",
+    careNotes: "Hand wash cold, shade dry flat, cool iron. Avoid wringing.",
     printedNotes:
       "Each block is registered to the last so the indigo net never breaks across the seams.",
     sizes: ["XS", "S", "M", "L", "XL"],

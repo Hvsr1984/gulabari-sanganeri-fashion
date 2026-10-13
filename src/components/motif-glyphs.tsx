@@ -40,7 +40,12 @@ export function ButiGlyph(props: GlyphProps) {
         strokeLinejoin="round"
       />
       <path d="M50 64v18" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-      <path d="M50 74c-4-2-8-1-10 2M50 78c4-2 8-1 10 2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path
+        d="M50 74c-4-2-8-1-10 2M50 78c4-2 8-1 10 2"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -48,7 +53,12 @@ export function ButiGlyph(props: GlyphProps) {
 export function BelGlyph(props: GlyphProps) {
   return (
     <svg viewBox="0 0 100 100" fill="none" aria-hidden {...props}>
-      <path d="M8 30h84M8 70h84" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <path
+        d="M8 30h84M8 70h84"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
       <path
         d="M14 50c8-14 16-14 22 0 6 14 14 14 22 0 6-14 14-14 22 0 4 9 8 12 12 10"
         stroke="currentColor"

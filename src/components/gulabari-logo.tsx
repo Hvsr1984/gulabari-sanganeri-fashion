@@ -1,5 +1,7 @@
 "use client";
 
+import { CraftImage } from "./craft-image";
+
 interface GulabariLogoProps {
   variant?: "dark" | "light" | "original";
   mode?: "full" | "emblem";
@@ -29,12 +31,15 @@ export function GulabariLogo({
       className={`relative inline-flex items-center justify-center select-none ${className}`}
       style={{ aspectRatio: mode === "emblem" ? "584/530" : "1/1" }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <CraftImage
         src={src}
         alt="GULABARI JAIPUR — Handcrafted Textiles. Timeless Stories."
+        sizes="96px"
+        priority={priority}
+        wrapperClassName="h-full w-full"
         className="h-full w-full object-contain"
-        loading={priority ? "eager" : "lazy"}
+        quality={90}
+        reveal={false}
       />
     </div>
   );
@@ -48,7 +53,7 @@ export function GulabariBrandLockup({
   scrolled?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-2 sm:gap-3 transition-transform duration-300">
+    <div className="flex items-center gap-2 transition-transform duration-300 sm:gap-3">
       {/* Botanical Jharokha Emblem */}
       <div
         className={`relative shrink-0 transition-all duration-300 ${
@@ -67,16 +72,14 @@ export function GulabariBrandLockup({
       <div className="flex flex-col justify-center leading-none">
         <div className="flex items-baseline gap-1.5 sm:gap-2">
           <span
-            className={`font-serif tracking-[0.18em] sm:tracking-[0.22em] uppercase font-semibold transition-all duration-300 ${
-              scrolled
-                ? "text-lg sm:text-xl md:text-2xl"
-                : "text-xl sm:text-2xl md:text-3xl"
+            className={`font-serif font-semibold tracking-[0.18em] uppercase transition-all duration-300 sm:tracking-[0.22em] ${
+              scrolled ? "text-lg sm:text-xl md:text-2xl" : "text-xl sm:text-2xl md:text-3xl"
             } ${isTransparent ? "text-bone" : "text-madder"}`}
           >
             GULABARI
           </span>
           <span
-            className={`text-[9px] sm:text-[10px] uppercase tracking-[0.28em] font-mono font-medium transition-colors duration-300 ${
+            className={`font-mono text-[9px] font-medium tracking-[0.28em] uppercase transition-colors duration-300 sm:text-[10px] ${
               isTransparent ? "text-bone/80" : "text-teak"
             }`}
           >
@@ -84,7 +87,7 @@ export function GulabariBrandLockup({
           </span>
         </div>
         <span
-          className={`hidden md:block font-serif italic text-[10px] tracking-wider mt-0.5 transition-colors duration-300 ${
+          className={`mt-0.5 hidden font-serif text-[10px] tracking-wider italic transition-colors duration-300 md:block ${
             isTransparent ? "text-bone/70" : "text-ink-soft/80"
           }`}
         >

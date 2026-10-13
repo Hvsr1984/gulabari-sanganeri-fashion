@@ -135,10 +135,40 @@ export const TIMELINE = [
 ];
 
 export const NATURAL_DYES = [
-  { name: "Indigo", tone: "Deep oceanic blue", color: "#2a3d63", source: "Fermented Indigofera tinctoria leaves" },
-  { name: "Madder", tone: "Warm terracotta red", color: "#9c3b2e", source: "Rubia tinctorum dried roots" },
-  { name: "Turmeric", tone: "Golden desert amber", color: "#c98a1e", source: "Curcuma longa rhizome powder" },
-  { name: "Pomegranate", tone: "Soft olive & mustard", color: "#7e8a63", source: "Dardim dried fruit rind" },
-  { name: "Iron rust", tone: "Charcoal & kohl black", color: "#23201b", source: "Aged scrap iron fermented in molasses" },
-  { name: "Harda (Myrobalan)", tone: "Tannin mordant primer", color: "#c9bfa8", source: "Chebulic myrobalan nut infusion" },
+  {
+    name: "Indigo",
+    tone: "Deep oceanic blue",
+    color: "#2a3d63",
+    source: "Fermented Indigofera tinctoria leaves",
+  },
+  {
+    name: "Madder",
+    tone: "Warm terracotta red",
+    color: "#9c3b2e",
+    source: "Rubia tinctorum dried roots",
+  },
+  {
+    name: "Turmeric",
+    tone: "Golden desert amber",
+    color: "#c98a1e",
+    source: "Curcuma longa rhizome powder",
+  },
+  {
+    name: "Pomegranate",
+    tone: "Soft olive & mustard",
+    color: "#7e8a63",
+    source: "Dardim dried fruit rind",
+  },
+  {
+    name: "Iron rust",
+    tone: "Charcoal & kohl black",
+    color: "#23201b",
+    source: "Aged scrap iron fermented in molasses",
+  },
+  {
+    name: "Harda (Myrobalan)",
+    tone: "Tannin mordant primer",
+    color: "#c9bfa8",
+    source: "Chebulic myrobalan nut infusion",
+  },
 ];

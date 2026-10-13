@@ -3,6 +3,7 @@
 import { useState, useRef, MouseEvent } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Reveal } from "./reveal";
+import { CraftImage } from "./craft-image";
 
 const TEXTURE_POINTS = [
   {
@@ -59,21 +60,21 @@ export function FabricTextureExperience() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-bone py-24 sm:py-32 border-b border-teak/10">
+    <section className="bg-bone border-teak/10 relative overflow-hidden border-b py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         {/* Header */}
         <Reveal>
-          <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-18">
-            <span className="text-xs uppercase tracking-[0.25em] font-medium text-teak">
+          <div className="mx-auto mb-14 max-w-3xl text-center sm:mb-18">
+            <span className="text-teak text-xs font-medium tracking-[0.25em] uppercase">
               Tactile Textile Examination
             </span>
-            <h2 className="mt-3 font-serif text-3xl sm:text-5xl font-semibold tracking-tight text-ink">
+            <h2 className="text-ink mt-3 font-serif text-3xl font-semibold tracking-tight sm:text-5xl">
               FEEL THE CRAFT
             </h2>
-            <p className="mt-4 text-sm sm:text-base leading-relaxed text-ink-soft">
-              True Sanganeri cloth is never digitally sterile. Move your cursor across the textile
-              below to explore the living character of unbleached cotton fibers, natural botanical ink
-              variations, and authentic hand-carved block impressions.
+            <p className="text-ink-soft mt-4 text-sm leading-relaxed sm:text-base">
+              True Sanganeri cloth is never digitally sterile. Move your cursor across the
+              textile below to explore the living character of unbleached cotton fibers, natural
+              botanical ink variations, and authentic hand-carved block impressions.
             </p>
           </div>
         </Reveal>
@@ -81,14 +82,14 @@ export function FabricTextureExperience() {
         {/* Interactive Fabric Stage */}
         <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
           {/* Main Fabric Canvas with Interactive Magnifier Lens */}
-          <div className="lg:col-span-8 perspective-1000">
+          <div className="perspective-1000 lg:col-span-8">
             <Reveal>
               <div
                 ref={containerRef}
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={handleMouseLeave}
                 onMouseMove={handleMouseMove}
-                className="relative cursor-crosshair overflow-hidden rounded-2xl bg-bone-deep cloth-shadow-lg select-none"
+                className="bg-bone-deep cloth-shadow-lg relative cursor-crosshair overflow-hidden rounded-2xl select-none"
               >
                 {/* 3D Tactile Fabric Canvas */}
                 <motion.div
@@ -107,21 +108,23 @@ export function FabricTextureExperience() {
                   transition={{ type: "spring", damping: 30, stiffness: 120 }}
                 >
                   {/* Main Macro Fabric Photography */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <CraftImage
                     src="/images/fabric-macro.jpg"
-                    alt="Extreme close-up of Sanganeri hand block printed cotton cloth showing fibers and ink"
-                    className="aspect-[4/3] sm:aspect-[16/10] w-full object-cover"
+                    alt="Extreme close-up of Sanganeri hand block printed cotton cloth showing fibres and ink"
+                    sizes="(max-width: 1024px) 92vw, 780px"
+                    wrapperClassName="aspect-[4/3] w-full sm:aspect-[16/10]"
+                    className="h-full w-full object-cover"
+                    quality={80}
                   />
 
                   {/* Overlay Vignette */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink/30 via-transparent to-transparent pointer-events-none" />
+                  <div className="from-ink/30 pointer-events-none absolute inset-0 bg-gradient-to-t via-transparent to-transparent" />
                 </motion.div>
 
                 {/* Dynamic Zoom Loupe / Magnifier Lens */}
                 {!reduce && isHovering && (
                   <motion.div
-                    className="pointer-events-none absolute hidden sm:block h-44 w-44 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border-2 border-bone bg-bone shadow-2xl z-30"
+                    className="border-bone bg-bone pointer-events-none absolute z-30 hidden h-44 w-44 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border-2 shadow-2xl sm:block"
                     style={{
                       left: `${lensPos.x}%`,
                       top: `${lensPos.y}%`,
@@ -132,15 +135,18 @@ export function FabricTextureExperience() {
                     <img
                       src="/images/fabric-macro.jpg"
                       alt=""
-                      className="absolute max-w-none w-[320%] h-[320%] object-cover"
+                      aria-hidden="true"
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute h-[320%] w-[320%] max-w-none object-cover"
                       style={{
                         left: `${-lensPos.x * 2.2}%`,
                         top: `${-lensPos.y * 2.2}%`,
                       }}
                     />
-                    <div className="absolute inset-0 rounded-full border border-ink/20 shadow-inner" />
-                    <div className="absolute bottom-2 left-0 right-0 text-center">
-                      <span className="rounded-full craft-pill px-2.5 py-0.5 text-[9px] font-mono uppercase text-ink">
+                    <div className="border-ink/20 absolute inset-0 rounded-full border shadow-inner" />
+                    <div className="absolute right-0 bottom-2 left-0 text-center">
+                      <span className="craft-pill text-ink rounded-full px-2.5 py-0.5 font-mono text-[9px] uppercase">
                         3.2× Macro Weave
                       </span>
                     </div>
@@ -158,7 +164,7 @@ export function FabricTextureExperience() {
                     aria-label={point.title}
                   >
                     <span className="relative flex h-6 w-6 items-center justify-center">
-                      <span className="relative inline-flex h-5 w-5 items-center justify-center rounded-full bg-indigo text-[10px] font-bold text-bone border border-bone/60 shadow-sm transition-transform group-hover:scale-110">
+                      <span className="bg-indigo text-bone border-bone/60 relative inline-flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-bold shadow-sm transition-transform group-hover:scale-110">
                         {point.id}
                       </span>
                     </span>
@@ -166,7 +172,7 @@ export function FabricTextureExperience() {
                 ))}
 
                 {/* Instruction Pill */}
-                <div className="absolute bottom-4 left-4 z-20 rounded-full craft-pill px-4 py-1.5 text-xs text-ink">
+                <div className="craft-pill text-ink absolute bottom-4 left-4 z-20 rounded-full px-4 py-1.5 text-xs">
                   <span>Hover to magnify fibers · Tap pins for craft insights</span>
                 </div>
               </div>
@@ -174,13 +180,13 @@ export function FabricTextureExperience() {
           </div>
 
           {/* Right: Tactile Feature Insights */}
-          <div className="lg:col-span-4 flex flex-col gap-4">
+          <div className="flex flex-col gap-4 lg:col-span-4">
             <Reveal delay={0.1}>
-              <div className="rounded-2xl border border-teak/15 bg-cotton p-6 cloth-shadow">
-                <span className="text-[11px] uppercase tracking-widest font-mono text-teak">
+              <div className="border-teak/15 bg-cotton cloth-shadow rounded-2xl border p-6">
+                <span className="text-teak font-mono text-[11px] tracking-widest uppercase">
                   Tactile Qualities
                 </span>
-                <h3 className="mt-1 font-serif text-2xl font-semibold text-ink">
+                <h3 className="text-ink mt-1 font-serif text-2xl font-semibold">
                   The Feel of Authenticity
                 </h3>
 

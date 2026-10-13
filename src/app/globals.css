@@ -6,7 +6,8 @@
   --color-cotton: #fcfbf9;
   --color-ink: #23201b;
   --color-ink-soft: #4a453c;
-  --color-ink-faint: #797368;
+  /* 4.32:1 → 5.1:1 on bone: passes WCAG AA for body and meta text. */
+  --color-ink-faint: #6b6559;
   --color-indigo: #25395c;
   --color-indigo-deep: #16243d;
   --color-madder: #9c3b2e;
@@ -18,7 +19,9 @@
   --color-sandstone: #e8ded0;
 
   --font-serif: var(--font-fraunces), "Playfair Display", Georgia, serif;
-  --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans:
+    var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
 
   --ease-craft: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -48,13 +51,106 @@ body {
   color: var(--color-bone);
 }
 
+/* ------------------------------------------------------------------ *
+ * Focus visibility
+ * Every interactive surface gets the same warm, high-contrast ring.
+ * Individual components no longer need to bolt on their own.
+ * ------------------------------------------------------------------ */
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-indigo);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* On dark imagery the indigo ring disappears — swap to bone. */
+.on-dark :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline-color: var(--color-bone);
+}
+
+/* Skip link — visible only when keyboard-focused. */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  transition: transform 220ms var(--ease-craft);
+  background: var(--color-indigo);
+  color: var(--color-bone);
+  padding: 0.7rem 1.15rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* ------------------------------------------------------------------ *
+ * Image reveal — a restrained blur-up that settles into focus. 
+ * Applied by <CraftImage>; inert for reduced-motion visitors.
+ * ------------------------------------------------------------------ */
+.craft-img-in {
+  animation: craft-img-settle 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes craft-img-settle {
+  from {
+    opacity: 0.001;
+    filter: blur(14px) saturate(0.85);
+    transform: scale(1.015);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0) saturate(1);
+    transform: scale(1);
+  }
+}
+
+/* Motif / swatch hover: the cloth lifts into light. */
+.cloth-lift {
+  transition:
+    transform 700ms var(--ease-craft),
+    box-shadow 500ms ease,
+    filter 500ms ease;
+}
+
+.group:hover .cloth-lift {
+  transform: translateY(-4px) rotate(-0.35deg);
+  box-shadow:
+    0 18px 30px -12px rgba(35, 32, 27, 0.22),
+    0 30px 60px -24px rgba(37, 57, 92, 0.18);
+  filter: saturate(1.06);
+}
+
+/* Shimmering hand-drawn underline for editorial links. */
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size 380ms var(--ease-craft);
+}
+
+.link-underline:hover,
+.link-underline:focus-visible {
+  background-size: 100% 1px;
+}
+
 /* Subtle organic linen/handloom paper grain texture */
 .grain {
   background-image:
     radial-gradient(rgba(110, 73, 43, 0.045) 1px, transparent 1px),
     radial-gradient(rgba(37, 57, 92, 0.035) 1px, transparent 1px);
-  background-size: 24px 24px, 36px 36px;
-  background-position: 0 0, 12px 12px;
+  background-size:
+    24px 24px,
+    36px 36px;
+  background-position:
+    0 0,
+    12px 12px;
 }
 
 /* 3D Depth and Perspectives */
@@ -98,7 +194,12 @@ body {
 
 /* Luxury fashion CTA button micro-interaction — subtle, no glow, no bounce */
 .btn-editorial {
-  transition: transform 300ms var(--ease-craft), background-color 300ms ease, border-color 300ms ease, color 300ms ease, box-shadow 300ms ease;
+  transition:
+    transform 300ms var(--ease-craft),
+    background-color 300ms ease,
+    border-color 300ms ease,
+    color 300ms ease,
+    box-shadow 300ms ease;
 }
 
 .btn-editorial:hover {
@@ -139,7 +240,8 @@ body {
 
 /* Subtle organic float animation for fabric swatches */
 @keyframes float-subtle {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
   }
   50% {
@@ -153,7 +255,7 @@ body {
 
 /* Editorial physical craft badge — tactile, matte, no artificial glow, bloom or emission */
 .craft-pill {
-  background-color: #F3EFE6;
+  background-color: #f3efe6;
   border: 1px solid rgba(110, 73, 43, 0.18);
   color: var(--color-ink, #23201b);
   box-shadow: 0 1px 2px rgba(35, 32, 27, 0.08);
@@ -171,7 +273,7 @@ body {
 
 @keyframes kenburns {
   from {
-    transform: scale(1.0);
+    transform: scale(1);
   }
   to {
     transform: scale(1.06);
@@ -180,10 +282,23 @@ body {
 
 /* Field validation shake */
 @keyframes shake {
-  10%, 90% { transform: translateX(-1px); }
-  20%, 80% { transform: translateX(2px); }
-  30%, 50%, 70% { transform: translateX(-3px); }
-  40%, 60% { transform: translateX(3px); }
+  10%,
+  90% {
+    transform: translateX(-1px);
+  }
+  20%,
+  80% {
+    transform: translateX(2px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-3px);
+  }
+  40%,
+  60% {
+    transform: translateX(3px);
+  }
 }
 
 .shake {
@@ -203,6 +318,101 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 
+/* ------------------------------------------------------------------ *
+ * Craft motions — the physical vocabulary of the printing table:
+ * a stamp falling, dye bleeding into cotton, cloth relaxing.
+ * ------------------------------------------------------------------ */
+@keyframes stamp-fall {
+  0% {
+    transform: translateY(-22px) scale(1.06);
+    opacity: 0;
+    filter: blur(3px);
+  }
+  55% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    filter: blur(0);
+  }
+  62% {
+    transform: translateY(0) scale(0.985);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-stamp {
+  animation: stamp-fall 620ms cubic-bezier(0.3, 1.4, 0.4, 1) both;
+}
+
+/* Natural dye flooding the weave on first paint. */
+@keyframes dye-bleed {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+.animate-dye {
+  animation: dye-bleed 700ms var(--ease-craft) both;
+}
+
+/* A single slow sweep of light across a cloth surface. */
+@keyframes cloth-sheen {
+  0% {
+    transform: translateX(-120%) skewX(-14deg);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(220%) skewX(-14deg);
+    opacity: 0;
+  }
+}
+
+.cloth-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.42) 50%,
+    transparent 80%
+  );
+  transform: translateX(-120%) skewX(-14deg);
+  opacity: 0;
+}
+
+.group:hover .cloth-sheen::after {
+  animation: cloth-sheen 1100ms var(--ease-craft) 1;
+}
+
+/* Registration marks drawing themselves in, like a carver's guide lines. */
+@keyframes dash-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.dash-draw path,
+.dash-draw line,
+.dash-draw circle {
+  stroke-dasharray: 240;
+  stroke-dashoffset: 240;
+  animation: dash-draw 1.8s var(--ease-craft) forwards;
+}
+
 /* Accessibility & Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -210,8 +420,17 @@ body {
   }
   .ken-burns,
   .animate-float,
-  .pulse-craft {
+  .pulse-craft,
+  .animate-stamp,
+  .animate-dye,
+  .craft-img-in,
+  .dash-draw path,
+  .dash-draw line,
+  .dash-draw circle {
     animation: none !important;
+  }
+  .cloth-sheen::after {
+    display: none;
   }
   .stamp-border path,
   .stamp-border line,

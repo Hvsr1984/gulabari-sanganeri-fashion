@@ -3,11 +3,12 @@
 import {
   createContext,
   useContext,
-  useEffect,
+  useMemo,
   useState,
   useCallback,
   type ReactNode,
 } from "react";
+import { useStoredSetter, useStoredValue } from "@/lib/hydration";
 
 export type CartItem = {
   slug: string;
@@ -34,81 +35,85 @@ type CartState = {
 
 const CartContext = createContext<CartState | null>(null);
 const STORAGE_KEY = "gulabari-cart-v1";
+const EMPTY: CartItem[] = [];
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  /**
+   * The cart lives in localStorage, read through useSyncExternalStore, so the
+   * first render is already hydrated — no effect-driven setState cascade and
+   * no hydration mismatch between server and client markup.
+   */
+  const stored = useStoredValue<CartItem[]>(STORAGE_KEY, EMPTY);
+  const persist = useStoredSetter<CartItem[]>(STORAGE_KEY);
   const [isOpen, setIsOpen] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setItems(JSON.parse(raw));
-    } catch {
-      /* ignore */
-    }
-    setHydrated(true);
-  }, []);
+  const setItems = useCallback(
+    (updater: (previous: CartItem[]) => CartItem[]) => persist(updater(stored)),
+    [persist, stored]
+  );
 
-  useEffect(() => {
-    if (!hydrated) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  }, [items, hydrated]);
+  const addItem = useCallback(
+    (item: Omit<CartItem, "qty">, qty = 1) => {
+      setItems((prev) => {
+        const index = prev.findIndex(
+          (entry) => entry.slug === item.slug && entry.size === item.size
+        );
+        if (index >= 0) {
+          const next = [...prev];
+          next[index] = { ...next[index], qty: next[index].qty + qty };
+          return next;
+        }
+        return [...prev, { ...item, qty }];
+      });
+      setIsOpen(true);
+    },
+    [setItems]
+  );
 
-  const addItem = useCallback((item: Omit<CartItem, "qty">, qty = 1) => {
-    setItems((prev) => {
-      const idx = prev.findIndex(
-        (p) => p.slug === item.slug && p.size === item.size
+  const removeItem = useCallback(
+    (slug: string, size: string) => {
+      setItems((prev) => prev.filter((entry) => !(entry.slug === slug && entry.size === size)));
+    },
+    [setItems]
+  );
+
+  const updateQty = useCallback(
+    (slug: string, size: string, qty: number) => {
+      setItems((prev) =>
+        prev
+          .map((entry) =>
+            entry.slug === slug && entry.size === size
+              ? { ...entry, qty: Math.max(1, qty) }
+              : entry
+          )
+          .filter((entry) => entry.qty > 0)
       );
-      if (idx >= 0) {
-        const next = [...prev];
-        next[idx] = { ...next[idx], qty: next[idx].qty + qty };
-        return next;
-      }
-      return [...prev, { ...item, qty }];
-    });
-    setIsOpen(true);
-  }, []);
+    },
+    [setItems]
+  );
 
-  const removeItem = useCallback((slug: string, size: string) => {
-    setItems((prev) => prev.filter((p) => !(p.slug === slug && p.size === size)));
-  }, []);
-
-  const updateQty = useCallback((slug: string, size: string, qty: number) => {
-    setItems((prev) =>
-      prev
-        .map((p) =>
-          p.slug === slug && p.size === size ? { ...p, qty: Math.max(1, qty) } : p
-        )
-        .filter((p) => p.qty > 0)
-    );
-  }, []);
-
-  const clear = useCallback(() => setItems([]), []);
+  const clear = useCallback(() => persist(EMPTY), [persist]);
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => setIsOpen(false), []);
 
-  const count = items.reduce((n, i) => n + i.qty, 0);
-  const subtotalCents = items.reduce((n, i) => n + i.priceCents * i.qty, 0);
+  const value = useMemo<CartState>(() => {
+    const count = stored.reduce((total, item) => total + item.qty, 0);
+    const subtotalCents = stored.reduce((total, item) => total + item.priceCents * item.qty, 0);
+    return {
+      items: stored,
+      isOpen,
+      addItem,
+      removeItem,
+      updateQty,
+      clear,
+      open,
+      close,
+      count,
+      subtotalCents,
+    };
+  }, [stored, isOpen, addItem, removeItem, updateQty, clear, open, close]);
 
-  return (
-    <CartContext.Provider
-      value={{
-        items,
-        isOpen,
-        addItem,
-        removeItem,
-        updateQty,
-        clear,
-        open,
-        close,
-        count,
-        subtotalCents,
-      }}
-    >
-      {children}
-    </CartContext.Provider>
-  );
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
 export function useCart() {

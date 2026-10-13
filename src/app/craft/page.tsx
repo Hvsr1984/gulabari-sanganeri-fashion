@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  ProcessScroll,
-  MotifGallery,
-  CraftTimeline,
-} from "@/components/craft-sections";
+import { ProcessScroll, MotifGallery, CraftTimeline } from "@/components/craft-sections";
 import { StampBorder } from "@/components/stamp-border";
 import { Reveal } from "@/components/reveal";
+import { CraftImage } from "@/components/craft-image";
 import { NATURAL_DYES } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -19,27 +16,30 @@ export default function CraftPage() {
   return (
     <article className="grain pt-20">
       {/* Hero */}
-      <header className="relative overflow-hidden min-h-[60vh] flex items-center">
+      <header className="relative flex min-h-[60vh] items-center overflow-hidden">
         <div className="absolute inset-0">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <CraftImage
             src="/images/craft-press.jpg"
             alt="An artisan hand block printing cotton on a long table in Sanganer"
+            sizes="100vw"
+            priority
+            wrapperClassName="h-full w-full"
             className="h-full w-full object-cover"
+            quality={75}
           />
-          <div className="absolute inset-0 bg-ink/65 backdrop-blur-[1px]" />
+          <div className="bg-ink/65 absolute inset-0 backdrop-blur-[1px]" />
         </div>
-        <div className="relative mx-auto max-w-4xl px-5 py-24 text-center text-bone">
-          <p className="text-xs uppercase tracking-[0.25em] text-bone/80 font-mono">
+        <div className="text-bone relative mx-auto max-w-4xl px-5 py-24 text-center">
+          <p className="text-bone/80 font-mono text-xs tracking-[0.25em] uppercase">
             Sanganer · Rajasthan · 500-Year Heritage
           </p>
-          <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight sm:text-6xl text-bone">
+          <h1 className="text-bone mt-4 font-serif text-4xl leading-tight font-semibold sm:text-6xl">
             The Craft of Sanganeri Print
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base sm:text-lg text-bone/90 leading-relaxed">
-            A hand-block textile tradition from Sanganer, on the banks of the Sahibi
-            river — where soft water once made washing and rinsing cloth possible,
-            and where Chippa families still print by hand today.
+          <p className="text-bone/90 mx-auto mt-5 max-w-2xl text-base leading-relaxed sm:text-lg">
+            A hand-block textile tradition from Sanganer, on the banks of the Sahibi river —
+            where soft water once made washing and rinsing cloth possible, and where Chippa
+            families still print by hand today.
           </p>
         </div>
       </header>
@@ -48,24 +48,22 @@ export default function CraftPage() {
       <section className="mx-auto max-w-3xl px-5 py-20">
         <Reveal>
           <h2 className="font-serif text-3xl">Origins on the Sahibi</h2>
-          <div className="mt-5 space-y-4 leading-relaxed text-ink-soft">
+          <div className="text-ink-soft mt-5 space-y-4 leading-relaxed">
             <p>
-              Sanganeri print is a hand-block textile craft from Sanganer, a town
-              roughly 6–15 km south of Jaipur. It traces to the late 16th–early 17th
-              century, when Chippa community artisans migrated from Gujarat — accounts
-              vary, but many point to the conflict of the Mughal–Maratha era — and
-              settled in Sanganer, Bagru and Jahota. The name{" "}
-              <em>Chippa</em> comes from <em>chappa</em>, meaning &ldquo;to
+              Sanganeri print is a hand-block textile craft from Sanganer, a town roughly 6–15
+              km south of Jaipur. It traces to the late 16th–early 17th century, when Chippa
+              community artisans migrated from Gujarat — accounts vary, but many point to the
+              conflict of the Mughal–Maratha era — and settled in Sanganer, Bagru and Jahota.
+              The name <em>Chippa</em> comes from <em>chappa</em>, meaning &ldquo;to
               print.&rdquo;
             </p>
             <p>
-              The town itself was established by Rana Sanga, a Mewar Rajput ruler, who
-              built it into a major art-printing centre. Patronised by royal courts,
-              by the 18th century Sanganer&rsquo;s printers were exporting cloth to
-              the Mughal court and to European trading companies; later the East India
-              Company became a major exporter. In 2010 the craft was granted a
-              Geographical Indication (GI) tag protecting authentic Sanganeri
-              printing.
+              The town itself was established by Rana Sanga, a Mewar Rajput ruler, who built it
+              into a major art-printing centre. Patronised by royal courts, by the 18th century
+              Sanganer&rsquo;s printers were exporting cloth to the Mughal court and to European
+              trading companies; later the East India Company became a major exporter. In 2010
+              the craft was granted a Geographical Indication (GI) tag protecting authentic
+              Sanganeri printing.
             </p>
           </div>
         </Reveal>
@@ -77,20 +75,20 @@ export default function CraftPage() {
         <div className="mx-auto max-w-3xl px-5 py-20">
           <Reveal>
             <h2 className="font-serif text-3xl">What makes it distinct</h2>
-            <div className="mt-5 space-y-4 leading-relaxed text-ink-soft">
+            <div className="text-ink-soft mt-5 space-y-4 leading-relaxed">
               <p>
-                Sanganeri is known for fine, delicate floral motifs on a white or
-                off-white, sun-bleached ground — lighter and more graceful than the
-                bold, dark-ground geometry of Bagru or the indigo-and-red resist of
-                Ajrakh. Motif curvature typically leans to the right, and the lines
-                are prized above all for their fineness.
+                Sanganeri is known for fine, delicate floral motifs on a white or off-white,
+                sun-bleached ground — lighter and more graceful than the bold, dark-ground
+                geometry of Bagru or the indigo-and-red resist of Ajrakh. Motif curvature
+                typically leans to the right, and the lines are prized above all for their
+                fineness.
               </p>
               <p>
-                Courtly pieces carry the influence of Mughal miniature painting and
-                Indo-Persian botanical art — tulips, irises, poppies, narcissus,
-                florals not native to Rajasthan — while everyday village cloth leans
-                on more indigenous flora and fauna. Chippa printers historically
-                worked with several hundred distinct buti and buta motifs.
+                Courtly pieces carry the influence of Mughal miniature painting and Indo-Persian
+                botanical art — tulips, irises, poppies, narcissus, florals not native to
+                Rajasthan — while everyday village cloth leans on more indigenous flora and
+                fauna. Chippa printers historically worked with several hundred distinct buti
+                and buta motifs.
               </p>
             </div>
           </Reveal>
@@ -101,9 +99,9 @@ export default function CraftPage() {
       <section className="mx-auto max-w-6xl px-5 py-20">
         <Reveal>
           <h2 className="font-serif text-3xl">The motif vocabulary</h2>
-          <p className="mt-3 max-w-2xl text-ink-soft">
-            Four families structure almost every Sanganeri cloth. Each carries a name,
-            a lineage and a maker.
+          <p className="text-ink-soft mt-3 max-w-2xl">
+            Four families structure almost every Sanganeri cloth. Each carries a name, a lineage
+            and a maker.
           </p>
         </Reveal>
         <div className="mt-10">
@@ -116,12 +114,10 @@ export default function CraftPage() {
         <div className="mx-auto max-w-4xl px-5 py-20">
           <Reveal>
             <div className="mb-14 text-center">
-              <p className="text-sm uppercase tracking-widest text-teak">
+              <p className="text-teak text-sm tracking-widest uppercase">
                 From raw cotton to finished cloth
               </p>
-              <h2 className="mt-2 font-serif text-3xl sm:text-4xl">
-                The eight-step process
-              </h2>
+              <h2 className="mt-2 font-serif text-3xl sm:text-4xl">The eight-step process</h2>
             </div>
           </Reveal>
           <ProcessScroll />
@@ -143,22 +139,22 @@ export default function CraftPage() {
         <div className="mx-auto max-w-5xl px-5 py-20">
           <Reveal>
             <h2 className="font-serif text-3xl">Natural dyes</h2>
-            <p className="mt-3 max-w-2xl text-ink-soft">
-              Traditional colour comes from indigo, alum, turmeric, pomegranate and
-              iron rust, among others.
+            <p className="text-ink-soft mt-3 max-w-2xl">
+              Traditional colour comes from indigo, alum, turmeric, pomegranate and iron rust,
+              among others.
             </p>
           </Reveal>
           <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
             {NATURAL_DYES.map((dye) => (
               <Reveal key={dye.name}>
-                <div className="flex items-center gap-3 rounded-xl border border-teak/15 bg-bone/60 p-4">
+                <div className="border-teak/15 bg-bone/60 flex items-center gap-3 rounded-xl border p-4">
                   <span
                     className="h-10 w-10 shrink-0 rounded-full"
                     style={{ backgroundColor: dye.color }}
                   />
                   <div>
                     <p className="font-medium">{dye.name}</p>
-                    <p className="text-xs text-ink-soft">{dye.tone}</p>
+                    <p className="text-ink-soft text-xs">{dye.tone}</p>
                   </div>
                 </div>
               </Reveal>
@@ -171,31 +167,29 @@ export default function CraftPage() {
       <section className="mx-auto max-w-3xl px-5 py-20">
         <Reveal>
           <h2 className="font-serif text-3xl">Tradition and the present</h2>
-          <div className="mt-5 space-y-4 leading-relaxed text-ink-soft">
+          <div className="text-ink-soft mt-5 space-y-4 leading-relaxed">
             <p>
-              Many contemporary workshops now blend safe synthetic dyes into their
-              palette for durability and colour range. This is a live tension in the
-              craft — one that also touches on GI status and the environmental
-              scrutiny of dye effluent in Sanganer. We believe the honest answer is
-              specificity: we tell you what a piece is dyed with, and we do not
-              overclaim.
+              Many contemporary workshops now blend safe synthetic dyes into their palette for
+              durability and colour range. This is a live tension in the craft — one that also
+              touches on GI status and the environmental scrutiny of dye effluent in Sanganer.
+              We believe the honest answer is specificity: we tell you what a piece is dyed
+              with, and we do not overclaim.
             </p>
             <p>
-              What stays constant is the hand: the carved block, the rhythm of
-              chhapaai, and the alignment held by eye. That is the part worth
-              protecting.
+              What stays constant is the hand: the carved block, the rhythm of chhapaai, and the
+              alignment held by eye. That is the part worth protecting.
             </p>
           </div>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/shop"
-              className="rounded-full bg-indigo px-6 py-3 text-sm text-bone hover:bg-indigo-deep"
+              className="bg-indigo text-bone hover:bg-indigo-deep rounded-full px-6 py-3 text-sm"
             >
               Shop the collection
             </Link>
             <Link
               href="/artisans"
-              className="rounded-full border border-teak/30 px-6 py-3 text-sm hover:border-indigo hover:text-indigo"
+              className="border-teak/30 hover:border-indigo hover:text-indigo rounded-full border px-6 py-3 text-sm"
             >
               Meet the artisans
             </Link>

@@ -13,4 +13,3 @@ export async function GET() {
     return Response.json({ ok: false }, { status: 500 });
   }
 }
-

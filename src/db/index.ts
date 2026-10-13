@@ -8,10 +8,10 @@ const globalForDb = globalThis as typeof globalThis & {
 };
 
 export const pool = databaseUrl
-  ? globalForDb.__arenaNextJsPostgresqlPool ??
+  ? (globalForDb.__arenaNextJsPostgresqlPool ??
     new Pool({
       connectionString: databaseUrl,
-    })
+    }))
   : null;
 
 if (databaseUrl && process.env.NODE_ENV !== "production" && pool) {
@@ -19,4 +19,3 @@ if (databaseUrl && process.env.NODE_ENV !== "production" && pool) {
 }
 
 export const db = pool ? drizzle(pool) : null;
-

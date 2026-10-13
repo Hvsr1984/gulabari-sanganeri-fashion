@@ -21,7 +21,7 @@ export function GulabariRoseSignature({
         viewBox="0 0 100 110"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full stroke-current"
+        className="h-full w-full stroke-current"
       >
         {/* Cusped Jharokha Arch */}
         <motion.path

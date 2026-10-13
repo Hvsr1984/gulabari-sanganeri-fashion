@@ -9,7 +9,7 @@ function DrawIcon({ children, delay = 0 }: { children: ReactNode; delay?: number
     <motion.svg
       viewBox="0 0 64 64"
       fill="none"
-      className="h-14 w-14 text-indigo"
+      className="text-indigo h-14 w-14"
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, amount: 0.6 }}
@@ -85,14 +85,14 @@ export function CareIcons() {
       {items.map((item, i) => (
         <div
           key={item.title}
-          className="flex gap-5 rounded-2xl border border-teak/15 bg-bone/60 p-6"
+          className="border-teak/15 bg-bone/60 flex gap-5 rounded-2xl border p-6"
         >
           <div className="shrink-0">
             <DrawIcon delay={i * 0.1}>{item.icon}</DrawIcon>
           </div>
           <div>
             <h3 className="font-serif text-xl">{item.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-ink-soft">{item.body}</p>
+            <p className="text-ink-soft mt-2 text-sm leading-relaxed">{item.body}</p>
           </div>
         </div>
       ))}

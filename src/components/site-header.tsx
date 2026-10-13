@@ -3,7 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useReducedMotion,
+  useScroll,
+  useMotionValueEvent,
+  useSpring,
+} from "framer-motion";
 import { useCart } from "./cart-context";
 import { useWishlist } from "./wishlist-context";
 import { SearchModal } from "./search-modal";
@@ -23,57 +30,75 @@ export function SiteHeader() {
   const pathname = usePathname();
   const { count: cartCount, open: openCart } = useCart();
   const { count: wishlistCount, open: openWishlist } = useWishlist();
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const reduce = useReducedMotion();
 
-  const isHome = pathname === "/";
+  // Close the mobile sheet on navigation without an effect-driven setState:
+  // React's documented "adjust state during render" pattern.
+  const [renderedPath, setRenderedPath] = useState(pathname);
+  if (renderedPath !== pathname) {
+    setRenderedPath(pathname);
+    if (menuOpen) setMenuOpen(false);
+  }
 
+  // Escape dismisses the mobile sheet, matching every other overlay on the site.
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 40);
+    if (!menuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
     };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen]);
 
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [pathname]);
+  // Scroll state and the reading-progress hairline come from motion values,
+  // so scrolling never triggers a React re-render on the hot path.
+  const { scrollY, scrollYProgress } = useScroll();
+  const [scrolled, setScrolled] = useState(false);
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const next = latest > 40;
+    if (next !== scrolled) setScrolled(next);
+  });
+  const progress = useSpring(scrollYProgress, { stiffness: 220, damping: 40, mass: 0.4 });
 
-  // Determine header appearance
+  const isHome = pathname === "/";
   const isTransparent = isHome && !scrolled && !menuOpen;
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-350 ${
+        className={`fixed top-0 right-0 left-0 z-40 transition-[background-color,box-shadow,border-color] duration-500 ${
           isTransparent
-            ? "bg-gradient-to-b from-ink/80 via-ink/35 to-transparent text-bone border-b border-white/10"
-            : "bg-[#F3EFE6] text-ink border-b border-teak/15 shadow-sm"
+            ? "from-ink/80 via-ink/35 text-bone border-b border-white/10 bg-gradient-to-b to-transparent"
+            : "border-teak/15 text-ink border-b bg-[#F3EFE6]/95 shadow-sm backdrop-blur-md"
         }`}
       >
         <div
-          className={`mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 transition-all duration-300 ${
-            scrolled ? "h-16" : "h-20 sm:h-22"
+          className={`mx-auto flex max-w-7xl items-center justify-between px-4 transition-all duration-500 sm:px-6 lg:px-8 ${
+            scrolled ? "h-16" : "h-20 sm:h-[5.5rem]"
           }`}
         >
-          {/* GULABARI Brand Logo */}
-          <Link href="/" className="group flex items-center" aria-label="GULABARI JAIPUR Home">
-            <GulabariBrandLockup isTransparent={isTransparent} scrolled={scrolled} />
+          <Link
+            href="/"
+            className="group flex items-center rounded-lg"
+            aria-label="GULABARI JAIPUR — home"
+          >
+            <span className="transition-transform duration-500 group-hover:scale-[1.02]">
+              <GulabariBrandLockup isTransparent={isTransparent} scrolled={scrolled} />
+            </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-7 lg:flex">
+          {/* Desktop navigation with a sliding cloth-underline */}
+          <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
             {NAV.map((item) => {
               const active = pathname === item.href;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`relative text-xs uppercase tracking-widest font-medium transition-colors ${
+                  aria-current={active ? "page" : undefined}
+                  className={`relative py-1 text-xs font-medium tracking-widest uppercase transition-colors ${
                     isTransparent
                       ? active
                         ? "text-bone font-semibold"
@@ -90,6 +115,7 @@ export function SiteHeader() {
                       className={`absolute -bottom-1 left-0 h-[1.5px] w-full ${
                         isTransparent ? "bg-bone" : "bg-indigo"
                       }`}
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
                     />
                   )}
                 </Link>
@@ -97,19 +123,23 @@ export function SiteHeader() {
             })}
           </nav>
 
-          {/* Right utility actions: Search, Wishlist, Cart, Mobile Toggle */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Search Trigger */}
+          <div className="flex items-center gap-1.5 sm:gap-3">
             <button
               onClick={() => setSearchOpen(true)}
               className={`flex items-center gap-1.5 rounded-full p-2 text-xs transition-colors ${
                 isTransparent
                   ? "text-bone/90 hover:bg-white/10"
-                  : "text-ink-soft hover:text-ink hover:bg-teak/10"
+                  : "text-ink-soft hover:bg-teak/10 hover:text-ink"
               }`}
-              aria-label="Search collection"
+              aria-label="Search the collection"
             >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -117,23 +147,25 @@ export function SiteHeader() {
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-              <span className="hidden md:inline font-sans text-xs uppercase tracking-wider">Search</span>
+              <span className="hidden font-sans text-xs tracking-wider uppercase md:inline">
+                Search
+              </span>
             </button>
 
-            {/* Wishlist Trigger */}
             <button
               onClick={openWishlist}
               className={`relative flex items-center gap-1.5 rounded-full p-2 text-xs transition-colors ${
                 isTransparent
                   ? "text-bone/90 hover:bg-white/10"
-                  : "text-ink-soft hover:text-ink hover:bg-teak/10"
+                  : "text-ink-soft hover:bg-teak/10 hover:text-ink"
               }`}
-              aria-label={`Open wishlist, ${wishlistCount} items`}
+              aria-label={`Open wishlist, ${wishlistCount} ${wishlistCount === 1 ? "piece" : "pieces"} saved`}
             >
               <svg
                 className={`h-4 w-4 ${wishlistCount > 0 ? "fill-madder text-madder" : "fill-none stroke-current"}`}
                 viewBox="0 0 24 24"
                 strokeWidth={1.75}
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -142,23 +174,28 @@ export function SiteHeader() {
                 />
               </svg>
               {wishlistCount > 0 && (
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-madder text-[10px] font-bold text-bone">
+                <span className="bg-madder text-bone flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold">
                   {wishlistCount}
                 </span>
               )}
             </button>
 
-            {/* Cart Trigger */}
             <button
               onClick={openCart}
-              className={`relative flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs uppercase tracking-wider font-medium transition-all ${
+              className={`relative flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium tracking-wider uppercase transition-all ${
                 isTransparent
-                  ? "border border-white/30 bg-white/10 text-bone hover:bg-white/20"
-                  : "border border-teak/30 bg-bone-deep/60 text-ink hover:border-indigo hover:text-indigo"
+                  ? "text-bone border border-white/30 bg-white/10 hover:bg-white/20"
+                  : "border-teak/30 bg-bone-deep/60 text-ink hover:border-indigo hover:text-indigo border"
               }`}
-              aria-label={`Open shopping cart, ${cartCount} items`}
+              aria-label={`Open shopping cart, ${cartCount} ${cartCount === 1 ? "item" : "items"}`}
             >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -168,72 +205,90 @@ export function SiteHeader() {
               </svg>
               <span className="hidden sm:inline">Cart</span>
               {cartCount > 0 && (
-                <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-indigo px-1 text-[10px] font-bold text-bone">
+                <span className="bg-indigo text-bone flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[10px] font-bold">
                   {cartCount}
                 </span>
               )}
             </button>
 
-            {/* Mobile Hamburger Toggle */}
             <button
-              className={`rounded-full p-2 lg:hidden transition-colors ${
+              className={`rounded-full p-2 transition-colors lg:hidden ${
                 isTransparent ? "text-bone hover:bg-white/10" : "text-ink hover:bg-teak/10"
               }`}
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-label="Toggle mobile menu"
+              onClick={() => setMenuOpen((value) => !value)}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
+              aria-controls="mobile-nav"
             >
-              <div className="flex h-4 w-5 flex-col justify-between">
+              <span className="flex h-4 w-5 flex-col justify-between">
                 <span
-                  className={`h-0.5 w-full transition-transform ${isTransparent ? "bg-bone" : "bg-ink"} ${
-                    menuOpen ? "translate-y-1.5 rotate-45" : ""
-                  }`}
+                  className={`h-0.5 w-full transition-transform duration-300 ${
+                    isTransparent ? "bg-bone" : "bg-ink"
+                  } ${menuOpen ? "translate-y-1.5 rotate-45" : ""}`}
                 />
                 <span
-                  className={`h-0.5 w-full transition-opacity ${isTransparent ? "bg-bone" : "bg-ink"} ${
-                    menuOpen ? "opacity-0" : ""
-                  }`}
+                  className={`h-0.5 w-full transition-opacity duration-200 ${
+                    isTransparent ? "bg-bone" : "bg-ink"
+                  } ${menuOpen ? "opacity-0" : ""}`}
                 />
                 <span
-                  className={`h-0.5 w-full transition-transform ${isTransparent ? "bg-bone" : "bg-ink"} ${
-                    menuOpen ? "-translate-y-1.5 -rotate-45" : ""
-                  }`}
+                  className={`h-0.5 w-full transition-transform duration-300 ${
+                    isTransparent ? "bg-bone" : "bg-ink"
+                  } ${menuOpen ? "-translate-y-1.5 -rotate-45" : ""}`}
                 />
-              </div>
+              </span>
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer */}
-        {menuOpen && (
-          <motion.nav
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="border-t border-teak/15 bg-bone text-ink shadow-xl lg:hidden"
-          >
-            <div className="flex flex-col px-6 py-5 divide-y divide-teak/10">
-              {NAV.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="py-3.5 text-sm uppercase tracking-widest font-serif text-ink hover:text-indigo transition-colors"
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <div className="pt-4 pb-2 flex gap-4 text-xs text-teak">
-                <span>Handcrafted in Jaipur</span>
-                <span>•</span>
-                <span>GI Tagged Sanganeri</span>
+        {/* Reading progress — a hairline of madder dye drawn as you scroll */}
+        <motion.div
+          aria-hidden="true"
+          style={{ scaleX: progress }}
+          className={`h-[2px] origin-left ${isTransparent ? "bg-bone/70" : "bg-madder/70"}`}
+        />
+
+        <AnimatePresence initial={false}>
+          {menuOpen && (
+            <motion.nav
+              id="mobile-nav"
+              aria-label="Mobile"
+              initial={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
+              animate={reduce ? { opacity: 1 } : { height: "auto", opacity: 1 }}
+              exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
+              transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+              className="border-teak/15 bg-bone text-ink overflow-hidden border-t shadow-xl lg:hidden"
+            >
+              <div className="divide-teak/10 flex flex-col divide-y px-6 py-3">
+                {NAV.map((item, index) => (
+                  <motion.div
+                    key={item.href}
+                    initial={reduce ? false : { opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.04 * index, duration: 0.3 }}
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setMenuOpen(false)}
+                      className={`hover:text-indigo block py-3.5 font-serif text-sm tracking-widest uppercase transition-colors ${
+                        pathname === item.href ? "text-indigo" : "text-ink"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.div>
+                ))}
+                <div className="text-teak flex gap-4 pt-4 pb-2 text-xs">
+                  <span>Handcrafted in Jaipur</span>
+                  <span aria-hidden="true">•</span>
+                  <span>GI Tagged Sanganeri</span>
+                </div>
               </div>
-            </div>
-          </motion.nav>
-        )}
+            </motion.nav>
+          )}
+        </AnimatePresence>
       </header>
 
-      {/* Search Modal */}
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );

@@ -12,17 +12,17 @@ export default async function ShopPage() {
   const products = await getProducts();
 
   return (
-    <div className="grain pt-28 sm:pt-32 pb-24">
-      <header className="mx-auto max-w-7xl px-5 sm:px-8 pb-8">
-        <span className="text-xs uppercase tracking-[0.25em] font-medium text-teak">
+    <div className="grain pt-28 pb-24 sm:pt-32">
+      <header className="mx-auto max-w-7xl px-5 pb-8 sm:px-8">
+        <span className="text-teak text-xs font-medium tracking-[0.25em] uppercase">
           Authentic Handcrafted Catalog
         </span>
-        <h1 className="mt-2 font-serif text-4xl sm:text-6xl font-semibold text-ink">
+        <h1 className="text-ink mt-2 font-serif text-4xl font-semibold sm:text-6xl">
           The Sanganer Collection
         </h1>
-        <p className="mt-3 max-w-2xl text-sm sm:text-base text-ink-soft leading-relaxed">
-          Each piece is stamped with hand-carved wooden blocks on unbleached natural cotton mul and voile.
-          Filter by garment, motif family, or natural dye palette.
+        <p className="text-ink-soft mt-3 max-w-2xl text-sm leading-relaxed sm:text-base">
+          Each piece is stamped with hand-carved wooden blocks on unbleached natural cotton mul
+          and voile. Filter by garment, motif family, or natural dye palette.
         </p>
       </header>
 

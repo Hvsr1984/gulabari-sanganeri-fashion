@@ -9,7 +9,7 @@ export function UnderlineDraw({ children }: { children: ReactNode }) {
     <span className="relative inline">
       {children}
       <svg
-        className="pointer-events-none absolute -bottom-3 left-0 h-3 w-full text-madder"
+        className="text-madder pointer-events-none absolute -bottom-3 left-0 h-3 w-full"
         viewBox="0 0 300 12"
         preserveAspectRatio="none"
         fill="none"
